@@ -12,25 +12,14 @@ namespace No7.Solution.Console
 
         public void HandleTrades(Stream stream)
         {
-            Trade trade = new Trade();
+            IRepository trade = new Trade();
             foreach (var line in ReadLines(stream))
             {
                 var fields = line.Split(new char[] { ',' });
                 trade.Create(fields);
             }
 
-            trade.Save();
-            GetInfo(trade);
-        }
-
-        private void GetInfo(Trade trade)
-        {
-            foreach (var i in trade.errorList)
-            {
-                System.Console.WriteLine(i);
-            }
-
-            System.Console.WriteLine("INFO: {0} trades processed", trade.NumberOfTreads);
+            trade.GetInfo();
         }
 
         private IEnumerable<string> ReadLines(Stream stream)

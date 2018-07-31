@@ -3,6 +3,7 @@
     internal interface IRepository
     {
         void Create(string[] fields);
-        void Save();
+        //void Save();
+        void GetInfo();
     }
 }

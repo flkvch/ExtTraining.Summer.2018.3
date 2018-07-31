@@ -13,12 +13,13 @@ namespace No7.Solution.Console
     public class Trade : IRepository
     {
         internal int NumberOfTreads { get; private set; }
-        internal List<TradeRecord> trades;
+       // internal List<TradeRecord> trades;
+        readonly private string connectionString;
         internal List<string> errorList = new List<string>();
 
         public Trade()
         {
-            trades = new List<TradeRecord>();
+            connectionString = ConfigurationManager.ConnectionStrings["TradeData"].ConnectionString;
         }
 
         public void Create(string[] fields)
@@ -64,7 +65,26 @@ namespace No7.Solution.Console
                 Price = tradePrice
             };
 
-            trades.Add(trade);
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    var command = connection.CreateCommand();
+                    command.Transaction = transaction;
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.CommandText = "dbo.Insert_Trade";
+                    command.Parameters.AddWithValue("@sourceCurrency", trade.SourceCurrency);
+                    command.Parameters.AddWithValue("@destinationCurrency", trade.DestinationCurrency);
+                    command.Parameters.AddWithValue("@lots", trade.Lots);
+                    command.Parameters.AddWithValue("@price", trade.Price);
+
+                    command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+                connection.Close();
+            }
+            //trades.Add(trade);
 
             NumberOfTreads++;
         }
@@ -94,35 +114,44 @@ namespace No7.Solution.Console
 
         }
 
-        public void Save()
+        //public void Save()
+        //{
+        //    // save into database
+        //    string connectionString = ConfigurationManager.ConnectionStrings["TradeData"].ConnectionString;
+        //    using (var connection = new SqlConnection(connectionString))
+        //    {
+        //        connection.Open();
+        //        using (var transaction = connection.BeginTransaction())
+        //        {
+        //            foreach (var trade in trades)
+        //            {
+        //                var command = connection.CreateCommand();
+        //                command.Transaction = transaction;
+        //                command.CommandType = System.Data.CommandType.StoredProcedure;
+        //                command.CommandText = "dbo.Insert_Trade";
+        //                command.Parameters.AddWithValue("@sourceCurrency", trade.SourceCurrency);
+        //                command.Parameters.AddWithValue("@destinationCurrency", trade.DestinationCurrency);
+        //                command.Parameters.AddWithValue("@lots", trade.Lots);
+        //                command.Parameters.AddWithValue("@price", trade.Price);
+
+        //                command.ExecuteNonQuery();
+        //            }
+
+        //            transaction.Commit();
+        //        }
+        //        connection.Close();
+        //    }
+        //}
+
+        public void GetInfo()
         {
-            // save into database
-            string connectionString = ConfigurationManager.ConnectionStrings["TradeData"].ConnectionString;
-            using (var connection = new SqlConnection(connectionString))
+            foreach (var i in errorList)
             {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
-                {
-                    foreach (var trade in trades)
-                    {
-                        var command = connection.CreateCommand();
-                        command.Transaction = transaction;
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-                        command.CommandText = "dbo.Insert_Trade";
-                        command.Parameters.AddWithValue("@sourceCurrency", trade.SourceCurrency);
-                        command.Parameters.AddWithValue("@destinationCurrency", trade.DestinationCurrency);
-                        command.Parameters.AddWithValue("@lots", trade.Lots);
-                        command.Parameters.AddWithValue("@price", trade.Price);
-
-                        command.ExecuteNonQuery();
-                    }
-
-                    transaction.Commit();
-                }
-                connection.Close();
+                System.Console.WriteLine(i);
             }
-        }
 
+            System.Console.WriteLine("INFO: {0} trades processed", NumberOfTreads);
+        }
     }
 
 }
