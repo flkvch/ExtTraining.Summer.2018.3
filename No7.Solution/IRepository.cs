@@ -1,9 +1,10 @@
-﻿namespace No7.Solution.Console
+﻿using System.Collections.Generic;
+
+namespace No7.Solution.Console
 {
-    internal interface IRepository
+    public interface IRepository
     {
         void Create(string[] fields);
-        //void Save();
-        void GetInfo();
+        IList<string> GetInfo();
     }
 }

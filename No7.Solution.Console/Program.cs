@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 
 namespace No7.Solution.Console
@@ -10,7 +11,13 @@ namespace No7.Solution.Console
             var tradeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("No7.Solution.Console.trades.txt");
             var tradeProcessor = new TradeHandler();
 
-            tradeProcessor.HandleTrades(tradeStream);
+            tradeProcessor.HandleTrades(tradeStream, out IList<string> infoList);
+
+            foreach (var message in infoList)
+            {
+                System.Console.WriteLine(message);
+            }
+            
         }
     }
 }

@@ -10,7 +10,7 @@ namespace No7.Solution.Console
     {
         internal static float LotSize = 100000f;
 
-        public void HandleTrades(Stream stream)
+        public void HandleTrades(Stream stream, out IList<string> infoList)
         {
             IRepository trade = new Trade();
             foreach (var line in ReadLines(stream))
@@ -19,7 +19,7 @@ namespace No7.Solution.Console
                 trade.Create(fields);
             }
 
-            trade.GetInfo();
+            infoList = trade.GetInfo();
         }
 
         private IEnumerable<string> ReadLines(Stream stream)

@@ -12,15 +12,15 @@ namespace No7.Solution.Console
 {
     public class Trade : IRepository
     {
-        internal int NumberOfTreads { get; private set; }
-       // internal List<TradeRecord> trades;
-        readonly private string connectionString;
+        private readonly string connectionString;
         internal List<string> errorList = new List<string>();
 
         public Trade()
         {
             connectionString = ConfigurationManager.ConnectionStrings["TradeData"].ConnectionString;
         }
+
+        internal int NumberOfTreads { get; private set; }
 
         public void Create(string[] fields)
         {           
@@ -54,13 +54,10 @@ namespace No7.Solution.Console
             //changed to try parse with culture info
             var tradePrice = decimal.Parse(fields[2], NumberStyles.Number, new CultureInfo("en-US"));
 
-            var sourceCurrencyCode = fields[0].Substring(0, 3);
-            var destinationCurrencyCode = fields[0].Substring(3, 3);
-
             var trade = new TradeRecord
             {
-                SourceCurrency = sourceCurrencyCode,
-                DestinationCurrency = destinationCurrencyCode,
+                SourceCurrency = fields[0].Substring(0, 3),
+                DestinationCurrency = fields[0].Substring(3, 3),
                 Lots = tradeAmount / TradeHandler.LotSize,
                 Price = tradePrice
             };
@@ -84,11 +81,9 @@ namespace No7.Solution.Console
                 }
                 connection.Close();
             }
-            //trades.Add(trade);
 
             NumberOfTreads++;
         }
-
                     
         private void ValidFields(string[] fields)
         {
@@ -114,43 +109,11 @@ namespace No7.Solution.Console
 
         }
 
-        //public void Save()
-        //{
-        //    // save into database
-        //    string connectionString = ConfigurationManager.ConnectionStrings["TradeData"].ConnectionString;
-        //    using (var connection = new SqlConnection(connectionString))
-        //    {
-        //        connection.Open();
-        //        using (var transaction = connection.BeginTransaction())
-        //        {
-        //            foreach (var trade in trades)
-        //            {
-        //                var command = connection.CreateCommand();
-        //                command.Transaction = transaction;
-        //                command.CommandType = System.Data.CommandType.StoredProcedure;
-        //                command.CommandText = "dbo.Insert_Trade";
-        //                command.Parameters.AddWithValue("@sourceCurrency", trade.SourceCurrency);
-        //                command.Parameters.AddWithValue("@destinationCurrency", trade.DestinationCurrency);
-        //                command.Parameters.AddWithValue("@lots", trade.Lots);
-        //                command.Parameters.AddWithValue("@price", trade.Price);
-
-        //                command.ExecuteNonQuery();
-        //            }
-
-        //            transaction.Commit();
-        //        }
-        //        connection.Close();
-        //    }
-        //}
-
-        public void GetInfo()
+        public IList<string> GetInfo()
         {
-            foreach (var i in errorList)
-            {
-                System.Console.WriteLine(i);
-            }
-
-            System.Console.WriteLine("INFO: {0} trades processed", NumberOfTreads);
+            IList<string> resultList = errorList;
+            resultList.Add($"INFO: {NumberOfTreads} trades processed");
+            return resultList;
         }
     }
 
