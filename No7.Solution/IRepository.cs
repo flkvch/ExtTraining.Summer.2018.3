@@ -5,6 +5,6 @@ namespace No7.Solution.Console
     public interface IRepository
     {
         void Create(string[] fields);
-        IList<string> GetInfo();
+        int NumberOfTreads { get; }
     }
 }

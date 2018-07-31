@@ -4,23 +4,21 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.IO;
-using System.Net.Http;
-using System.Xml.Schema;
+using NLog;
 
 namespace No7.Solution.Console
 {
-    public class Trade : IRepository
+    internal class Trade : IRepository
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private readonly string connectionString;
-        internal List<string> errorList = new List<string>();
 
         public Trade()
         {
             connectionString = ConfigurationManager.ConnectionStrings["TradeData"].ConnectionString;
         }
 
-        internal int NumberOfTreads { get; private set; }
+        public int NumberOfTreads { get; private set; }
 
         public void Create(string[] fields)
         {           
@@ -30,23 +28,23 @@ namespace No7.Solution.Console
             }
             catch (FieldLengthException)
             {
-                errorList.Add($"WARN: Trade length on line {NumberOfTreads} is: '{fields.Length}'");
+                logger.Warn("WARN: Trade length on line {0} is: '{1}'", NumberOfTreads, fields.Length);
                 return;
             }
             catch (CurrencyException)
             {
-                errorList.Add($"WARN: Trade currencies on line {NumberOfTreads} malformed: '{fields[0]}'");
+                logger.Warn("WARN: Trade currencies on line {0} malformed: '{1}'", NumberOfTreads, fields[0]);
                 return;
             }
             catch (TradeAmountException)
             {
-                errorList.Add($"WARN: Trade amount on line {NumberOfTreads} not a valid integer: '{fields[1]}'");
+                logger.Warn("WARN: Trade amount on line {0} not a valid integer: '{1}'", NumberOfTreads, fields[1]);
                 return;
             }
 
             catch (TradePriceException)
             {
-                errorList.Add($"WARN: Trade price on line {NumberOfTreads} not a valid decimal: '{fields[2]}'");
+                logger.Warn("WARN: Trade price on line {0} not a valid decimal: '{1}'", NumberOfTreads, fields[2]);
                 return;
             }
 
@@ -107,13 +105,6 @@ namespace No7.Solution.Console
                 throw new TradePriceException();
             }
 
-        }
-
-        public IList<string> GetInfo()
-        {
-            IList<string> resultList = errorList;
-            resultList.Add($"INFO: {NumberOfTreads} trades processed");
-            return resultList;
         }
     }
 

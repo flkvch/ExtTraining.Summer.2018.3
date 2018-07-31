@@ -3,14 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using NLog;
 
 namespace No7.Solution.Console
 {
     public class TradeHandler
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         internal static float LotSize = 100000f;
 
-        public void HandleTrades(Stream stream, out IList<string> infoList)
+        public void HandleTrades(Stream stream)
         {
             IRepository trade = new Trade();
             foreach (var line in ReadLines(stream))
@@ -19,7 +22,7 @@ namespace No7.Solution.Console
                 trade.Create(fields);
             }
 
-            infoList = trade.GetInfo();
+            logger.Info("INFO: {0} trades processed", trade.NumberOfTreads);
         }
 
         private IEnumerable<string> ReadLines(Stream stream)
