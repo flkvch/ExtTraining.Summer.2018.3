@@ -40,7 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\CurrencyException.cs" />
+    <Compile Include="Exceptions\FieldLengthException.cs" />
+    <Compile Include="ISaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SaverToDb.cs" />
+    <Compile Include="Trade.cs" />
+    <Compile Include="Exceptions\TradeAmountException.cs" />
+    <Compile Include="TradeHandler.cs" />
+    <Compile Include="Exceptions\TradePriceException.cs" />
+    <Compile Include="TradeRecord.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

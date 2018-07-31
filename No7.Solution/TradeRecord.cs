@@ -1,6 +1,6 @@
 ﻿namespace No7.Solution.Console
 {
-    internal class TradeRecord
+    public class TradeRecord
     {
         internal string DestinationCurrency;
         internal float Lots;
