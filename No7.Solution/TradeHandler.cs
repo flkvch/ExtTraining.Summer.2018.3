@@ -12,15 +12,18 @@ namespace No7.Solution.Console
 
         public void HandleTrades(Stream stream)
         {
-            var readLines = ReadLines(stream);
-            Trade trade = new Trade(readLines);           
-            ISaver saver = new SaverToDb();
-            saver.Save(trade);
-            new SaverToDb().Save(trade);
+            Trade trade = new Trade();
+            foreach (var line in ReadLines(stream))
+            {
+                var fields = line.Split(new char[] { ',' });
+                trade.Create(fields);
+            }
+
+            trade.Save();
             GetInfo(trade);
         }
 
-        public void GetInfo(Trade trade)
+        private void GetInfo(Trade trade)
         {
             foreach (var i in trade.errorList)
             {
