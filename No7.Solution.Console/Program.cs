@@ -9,10 +9,8 @@ namespace No7.Solution.Console
         static void Main(string[] args)
         {
             var tradeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("No7.Solution.Console.trades.txt");
-            var tradeProcessor = new TradeHandler();
-            
-            tradeProcessor.HandleTrades(tradeStream);
-            
+            var tradeProcessor = new TradeService();
+            tradeProcessor.WriteToDb(tradeProcessor.ReadFromStream(tradeStream));
         }
     }
 }

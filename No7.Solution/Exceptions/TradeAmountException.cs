@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace No7.Solution.Console
+namespace No7.Solution.Exceptions
 {
     [Serializable]
     internal class TradeAmountException : Exception
